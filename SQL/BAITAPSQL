@@ -1,0 +1,1431 @@
+
+----------------------------------------------- ** Testing System ------------------------------------------------------
+----------------------------------------------- ** System    1 ---------------------------------------------------------
+
+create database gtel;
+use gtel;
+create table department(
+departmentId   INT NOT NULL AUTO_INCREMENT primary key,
+departmentName varchar(200)
+);
+create table Positions(
+positionId INT NOT NULL AUTO_INCREMENT primary key,
+positionName nvarchar(100)
+);
+
+
+CREATE TABLE account (
+    accountId INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(100),
+    username VARCHAR(50),
+    fullName VARCHAR(100),
+    departmentId INT,
+    positionId INT,
+    createDate DATE,
+    CONSTRAINT fk_department FOREIGN KEY (departmentId) REFERENCES department(departmentId),
+    CONSTRAINT fk_position FOREIGN KEY (positionId) REFERENCES Positions(positionId)
+);
+
+create table Group_t(
+GroupID INT NOT NULL AUTO_INCREMENT primary key,
+GroupName nvarchar(100),
+CreatorID INT,
+CreateDate date
+);
+create table GroupAccount(
+	GroupID INT,
+    accountId INT,
+    JoinDate date,
+    CONSTRAINT fk_Group_t FOREIGN KEY (GroupID) REFERENCES Group_t(GroupID),
+    CONSTRAINT fk_account FOREIGN KEY (accountId) REFERENCES account(accountId)
+);
+
+create table TypeQuestion(
+	TypeID INT NOT NULL AUTO_INCREMENT primary key,
+    TypeName varchar(200)
+);
+create table  CategoryQuestion(
+	CategoryID INT NOT NULL AUTO_INCREMENT primary key,
+    CategoryName varchar(200)
+);
+create table Question(
+	QuestionID INT NOT NULL AUTO_INCREMENT primary key,
+    Content varchar(200),
+    CategoryID INT,
+    TypeID INT,
+    CreatorID INT,
+    CreateDate Date
+);
+create table Answer(
+	AnswerID INT NOT NULL AUTO_INCREMENT primary key,
+    Content varchar(200),
+    QuestionID INT,
+    isCorrect enum('TRUE', 'FALSE'),
+    CONSTRAINT fk_question FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
+);
+create table Exam(
+	ExamID INT NOT NULL AUTO_INCREMENT primary key,
+    Code varchar(200),
+    Title varchar(500),
+    CategoryID INT,
+    Duration time,
+    CreatorID INT,
+    CreateDate date,
+     CONSTRAINT fk_CategoryQuestion FOREIGN KEY (CategoryID) REFERENCES CategoryQuestion(CategoryID)
+);
+create table ExamQuestion(
+	ExamID INT,
+    QuestionID INT,
+    CONSTRAINT fk_Exam FOREIGN KEY (ExamID) REFERENCES Exam(ExamID),
+	CONSTRAINT fk_ExamQuestion FOREIGN KEY (QuestionID) REFERENCES Question(QuestionID)
+
+);
+
+-- Thêm dữ liệu vào bảng department
+INSERT INTO department (departmentName) VALUES
+('Nhân sự'), ('Công nghệ thông tin'), ('Tài chính'), ('Tiếp thị'), ('Bán hàng'),
+('Vận hành'), ('Chăm sóc khách hàng'), ('Nghiên cứu'), ('Pháp lý'), ('Ban giám đốc');
+
+-- Thêm dữ liệu vào bảng Positions
+INSERT INTO Positions (positionName) VALUES
+('Quản lý'), ('Trợ lý'), ('Điều phối viên'), ('Chuyên viên'), ('Giám đốc'),
+('Phân tích viên'), ('Đại diện'), ('Kỹ sư'), ('Giám sát viên'), ('Cộng sự');
+
+-- Thêm dữ liệu vào bảng account
+INSERT INTO account (email, username, fullName, departmentId, positionId, createDate) VALUES
+('nguyen@example.com', 'nguyen_van_a', 'Nguyễn Văn A', 1, 1, '2023-01-01'),
+('tran@example.com', 'tran_thi_b', 'Trần Thị B', 2, 2, '2023-01-02'),
+('le@example.com', 'le_van_c', 'Lê Văn C', 3, 3, '2023-01-03'),
+('pham@example.com', 'pham_thi_d', 'Phạm Thị D', 4, 4, '2023-01-04'),
+('hoang@example.com', 'hoang_van_e', 'Hoàng Văn E', 5, 5, '2023-01-05'),
+('vu@example.com', 'vu_thi_f', 'Vũ Thị F', 6, 6, '2023-01-06'),
+('dao@example.com', 'dao_van_g', 'Đào Văn G', 7, 7, '2023-01-07'),
+('bui@example.com', 'bui_thi_h', 'Bùi Thị H', 8, 8, '2023-01-08'),
+('do@example.com', 'do_van_i', 'Đỗ Văn I', 9, 9, '2023-01-09'),
+('ho@example.com', 'ho_thi_k', 'Hồ Thị K', 10, 10, '2023-01-10');
+
+-- Thêm dữ liệu vào bảng Group_t
+INSERT INTO Group_t (GroupName, CreatorID, CreateDate) VALUES
+('Nhóm Nhân sự', 1, '2023-02-01'),
+('Nhóm CNTT', 2, '2023-02-02'),
+('Nhóm Tài chính', 3, '2023-02-03'),
+('Nhóm Tiếp thị', 4, '2023-02-04'),
+('Nhóm Bán hàng', 5, '2023-02-05'),
+('Nhóm Vận hành', 6, '2023-02-06'),
+('Nhóm CSKH', 7, '2023-02-07'),
+('Nhóm Nghiên cứu', 8, '2023-02-08'),
+('Nhóm Pháp lý', 9, '2023-02-09'),
+('Nhóm Ban giám đốc', 10, '2023-02-10');
+
+-- Thêm dữ liệu vào bảng GroupAccount
+INSERT INTO GroupAccount (GroupID, accountId, JoinDate) VALUES
+(1, 1, '2023-03-01'),
+(2, 2, '2023-03-02'),
+(3, 3, '2023-03-03'),
+(4, 4, '2023-03-04'),
+(5, 5, '2023-03-05'),
+(6, 6, '2023-03-06'),
+(7, 7, '2023-03-07'),
+(8, 8, '2023-03-08'),
+(9, 9, '2023-03-09'),
+(10, 10, '2023-03-10');
+
+-- Thêm dữ liệu vào bảng TypeQuestion
+INSERT INTO TypeQuestion (TypeName) VALUES
+('Trắc nghiệm'), ('Đúng/Sai'), ('Trả lời ngắn'), ('Tự luận'), ('Điền vào chỗ trống'),
+('Ghép đôi'), ('Xếp hạng'), ('Thang đo Likert'), ('Thang đo ngữ nghĩa'), ('Câu hỏi mở');
+
+-- Thêm dữ liệu vào bảng CategoryQuestion
+INSERT INTO CategoryQuestion (CategoryName) VALUES
+('Kiến thức chung'), ('Khoa học'), ('Toán học'), ('Lịch sử'), ('Văn học'),
+('Địa lý'), ('Nghệ thuật'), ('Âm nhạc'), ('Thể thao'), ('Công nghệ');
+
+-- Thêm dữ liệu vào bảng Question
+INSERT INTO Question (Content, CategoryID, TypeID, CreatorID, CreateDate) VALUES
+('Thủ đô của Việt Nam là gì?', 1, 1, 1, '2023-04-01'),
+('Công thức hóa học của nước là gì?', 2, 1, 2, '2023-04-02'),
+('5 + 7 bằng bao nhiêu?', 3, 1, 3, '2023-04-03'),
+('Ai là vị vua cuối cùng của triều Nguyễn?', 4, 1, 4, '2023-04-04'),
+('Ai là tác giả của "Truyện Kiều"?', 5, 1, 5, '2023-04-05'),
+('Sông nào dài nhất Việt Nam?', 6, 1, 6, '2023-04-06'),
+('Ai vẽ bức tranh "Cô gái với bông hoa hướng dương"?', 7, 1, 7, '2023-04-07'),
+('Ai sáng tác bài hát "Việt Nam ơi"?', 8, 1, 8, '2023-04-08'),
+('Môn thể thao nào sử dụng vợt và cầu lông?', 9, 1, 9, '2023-04-09'),
+('RAM là viết tắt của cụm từ gì trong máy tính?', 10, 1, 10, '2023-04-10');
+
+-- Thêm dữ liệu vào bảng Answer
+INSERT INTO Answer (Content, QuestionID, isCorrect) VALUES
+('Hà Nội', 1, 'TRUE'),
+('H2O', 2, 'TRUE'),
+('12', 3, 'TRUE'),
+('Bảo Đại', 4, 'TRUE'),
+('Nguyễn Du', 5, 'TRUE'),
+('Sông Mê Kông', 6, 'TRUE'),
+('Vincent van Gogh', 7, 'TRUE'),
+('Nguyễn Hải Phong', 8, 'TRUE'),
+('Cầu lông', 9, 'TRUE'),
+('Random Access Memory', 10, 'TRUE');
+
+-- Thêm dữ liệu vào bảng Exam
+INSERT INTO Exam (Code, Title, CategoryID, Duration, CreatorID, CreateDate) VALUES
+('KT001', 'Kiểm tra kiến thức chung', 1, '01:00:00', 1, '2023-05-01'),
+('KT002', 'Bài kiểm tra Khoa học', 2, '01:30:00', 2, '2023-05-02'),
+('KT003', 'Bài thi Toán', 3, '02:00:00', 3, '2023-05-03'),
+('KT004', 'Đánh giá Lịch sử', 4, '01:45:00', 4, '2023-05-04'),
+('KT005', 'Kiểm tra Văn học', 5, '01:15:00', 5, '2023-05-05'),
+('KT006', 'Bài kiểm tra Địa lý', 6, '01:30:00', 6, '2023-05-06'),
+('KT007', 'Bài thi Lịch sử Nghệ thuật', 7, '02:00:00', 7, '2023-05-07'),
+('KT008', 'Kiểm tra Lý thuyết Âm nhạc', 8, '01:00:00', 8, '2023-05-08'),
+('KT009', 'Câu đố Thể thao', 9, '00:45:00', 9, '2023-05-09'),
+('KT010', 'Đánh giá Công nghệ', 10, '01:30:00', 10, '2023-05-10');
+
+-- Thêm dữ liệu vào bảng ExamQuestion
+INSERT INTO ExamQuestion (ExamID, QuestionID) VALUES
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5),
+(6, 6), (7, 7), (8, 8), (9, 9), (10, 10);
+
+
+
+
+
+----------------------------------------------- ** System    3 ---------------------------------------------------------
+
+select * from department;
+select departmentId from department where departmentName = 'SALE';
+select * from account ac
+where length(ac.fullName) = ( select max(length(fullName)) from account);
+select * from account ac
+where length(ac.fullName) = ( select max(length(fullName)) from account where departmentId = 3) and ac.departmentID = 3;
+select count(ac.accountId) from account ac where ac.departmentId = 2;
+select * from Exam;
+select * from account ac inner join department d on ac.departmentId = d.departmentId;
+select * from group_t g where g.createDate > 2019-12-20;
+select q.QuestionID from question q inner join answer a on q.QuestionID = a.QuestionID group by q.QuestionID having count(q.QuestionID) = 4;
+select e.ExamID from Exam e where  e.Duration >=60 and e.CreateDate < 2019-12-20;
+select * from group_t order by CreateDate desc limit 5;
+select count(ac.accountId) from account ac where ac.departmentId = 2;
+select * from account where fullName like 'D%o';
+delete from exam e where e.CreateDate < '2019-12-20';
+delete from question q where q.content like 'câu hỏi%';
+update account
+set fullName = 'Nguyễn Bá Lộc',email = 'loc.nguyenba@bti.com.vn' where accountId = 5;
+update account
+set departmentId = 4 where accountId = 5;
+
+------------------------------------------------------ ** System 4 -----------------------------------------------------
+
+
+select * from account ac inner join department d on ac.departmentId = d.departmentId;
+select * from account ac where ac.createDate > 2010-12-20;
+select * from account ac inner join department d on ac.departmentId = d.departmentId where d.departmentName = 'Công nghệ thông tin';
+select * from account ac inner join department d on ac.departmentId = d.departmentId  group by d.departmentId having  count(d.departmentName)  > 3;
+SELECT q.*
+FROM question q
+INNER JOIN ExamQuestion eq ON q.QuestionID = eq.QuestionID
+GROUP BY q.QuestionID
+HAVING COUNT(*) = (
+    SELECT MAX(question_count)
+    FROM (
+        SELECT COUNT(*) as question_count
+        FROM ExamQuestion
+        GROUP BY QuestionID
+    ) as counts
+);
+select count(q.QuestionID) from question q  inner join CategoryQuestion cq on q.CategoryID = cq.CategoryID group by(q.QuestionID);
+select count(q.QuestionID) from question q
+inner join ExamQuestion eq on q.QuestionID = eq.QuestionID
+inner join Exam e on eq.ExamID = e.ExamID
+group by (q.QuestionID);
+select q.* from (
+	select * from answer a group by a. QuestionID  having count(*) = (
+		select max(questions)
+        from(
+			select count(*) as questions
+            from answer a2
+            group by a2.QuestionID
+        ) as count_new
+    )
+) as answer_data inner join question q on q.QuestionID = answer_data.QuestionID ;
+select count(ac.AccountID) from account ac inner join GroupAccount ga on ac.AccountID = ga.AccountID inner join Group_t gt on gt.GroupID = ga.GroupID group by gt.GroupID;
+SELECT *
+FROM account ac
+INNER JOIN Positions p ON ac.PositionID = p.PositionID
+GROUP BY p.PositionID
+HAVING COUNT(p.PositionID) = (
+    SELECT MIN(dept_count)
+    FROM (
+        SELECT COUNT(ac.AccountID) AS dept_count
+        FROM Account ac2
+        GROUP BY ac2.PositionID
+    ) AS dept_counts
+);
+select count(d.departmentId), d.departmentName from account ac inner join department d on ac.departmentId = d.departmentId  group by d.departmentId;
+select count(*) from question q inner join answer a on q.QuestionID = a.QuestionID group by q.typeId;
+
+SELECT count(ac.accountId), d.departmentName
+FROM account ac
+INNER JOIN department d ON ac.departmentId = d.departmentId
+GROUP BY d.departmentName;
+select * from department d left join account ac on d.departmentId = ac.departmentId where ac.accountId is null;
+
+select * from question q left join answer a on q.QuestionID = a.QuestionID where a.answerId is null;
+
+select * from account ac where ac.departmentId = 1;
+select * from account ac where ac.departmentId = 2;
+select * from account ac where ac.departmentId = 1
+union
+select * from account ac where ac.departmentId = 2;
+select * from account ac inner join groupAccount ga  on ac.AccountID = ga.AccountID
+inner join group_t gt on gt.GroupID = ga.GroupID
+  group by gt.GroupID having  count(gt.GroupID)  > 5;
+select * from account ac inner join groupAccount ga  on ac.AccountID = ga.AccountID
+inner join group_t gt on gt.GroupID = ga.GroupID
+  group by gt.GroupID having  count(gt.GroupID)  < 7;
+
+select * from account ac inner join groupAccount ga  on ac.AccountID = ga.AccountID
+inner join group_t gt on gt.GroupID = ga.GroupID
+  group by gt.GroupID having  count(gt.GroupID)  > 5
+union
+select * from account ac inner join groupAccount ga  on ac.AccountID = ga.AccountID
+inner join group_t gt on gt.GroupID = ga.GroupID
+  group by gt.GroupID having  count(gt.GroupID)  <7;
+
+** System 5
+
+select ac.* from account ac inner join department d on ac.departmentId = d.departmentId where d.departmentName = 'Bán hàng';
+CREATE VIEW AccountsInMostGroups AS
+SELECT
+    ac.AccountID,
+    ac.Username,
+    ac.FullName,
+    ac.Email,
+    COUNT(ga.GroupID) AS GroupCount
+FROM
+    account ac
+JOIN
+    groupAccount ga ON ac.AccountID = ga.AccountID
+GROUP BY
+    ac.AccountID, ac.Username, ac.FullName, ac.Email
+HAVING
+    COUNT(ga.GroupID) = (
+        SELECT COUNT(GroupID)
+        FROM groupAccount
+        GROUP BY AccountID
+        ORDER BY COUNT(GroupID) DESC
+        LIMIT 1
+    );
+
+CREATE VIEW LongQuestions AS
+SELECT QuestionID, Content, LENGTH(Content) - LENGTH(REPLACE(Content, ' ', '')) + 1 AS WordCount
+FROM question
+WHERE LENGTH(Content) - LENGTH(REPLACE(Content, ' ', '')) + 1 > 300;
+DELETE FROM question
+WHERE QuestionID IN (SELECT QuestionID FROM LongQuestions);
+
+CREATE VIEW TopDepartments AS
+SELECT
+    d.departmentId,
+    d.departmentName,
+    COUNT(a.accountId) AS EmployeeCount
+FROM
+    department d
+LEFT JOIN
+    account a ON d.departmentId = a.departmentId
+GROUP BY
+    d.departmentId, d.departmentName
+ORDER BY
+    EmployeeCount DESC;
+
+
+--------------------------------------------- ** System 6 --------------------------------------------------------------
+
+DELIMITER $$
+create procedure getAccountByDepartmentName(IN deptName varchar(200))
+begin
+	select a.*
+    from
+    account a
+    inner join
+    department d
+    on a.DepartmentID = d.DepartmentID
+    where d.DepartmentName = deptName;
+
+    END $$
+DELIMITER ;
+
+DELIMITER $$
+create procedure getCountAccountInGroup()
+begin
+		select count(ga.GroupID)
+		from account a
+        inner join GroupAccount ga
+        on a.AccountID = ga.AccountID
+        group by ga.GroupID;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+create procedure getTypeId()
+begin
+	select q.TypeID
+    from question q
+    group by q.TypeID
+    having count(q.TypeID) = (
+		select max(type_count)
+        from (
+			select count(q2.TypeID) as type_count
+            from question q2
+			group by q2.TypeID
+        ) as type_count
+    ) ;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+create procedure getTypeIdQuestion4()
+	begin
+    select tq.TypeName
+    from question q
+    inner join TypeQuestion tq
+    on tq.TypeID = q.TypeID
+    where q.QuestionID = 4;
+
+END $$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE searchGroupOrUser(IN inputString VARCHAR(200))
+BEGIN
+    SELECT
+        g.GroupID AS ID,
+        g.GroupName AS Name,
+        'Group' AS Type,
+        g.CreatorID AS Creator,
+        g.CreateDate AS DateCreated
+    FROM
+        Group_t g
+    WHERE
+        g.GroupName LIKE CONCAT('%', inputString, '%')
+
+    UNION
+
+    -- Select users where the username contains the input string
+    SELECT
+        a.accountId AS ID,
+        a.username AS Name,
+        'User' AS Type,
+        a.fullName AS Creator,
+        a.createDate AS DateCreated
+    FROM
+        account a
+    WHERE
+        a.username LIKE CONCAT('%', inputString, '%');
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE addAccount(
+    IN in_fullName VARCHAR(200),
+    IN in_email VARCHAR(200)
+)
+BEGIN
+    DECLARE generated_username VARCHAR(50);
+    DECLARE default_positionID INT DEFAULT 1;
+    DECLARE waiting_room_departmentID INT DEFAULT 1;
+    SET generated_username = SUBSTRING_INDEX(in_email, '@', 1);
+    INSERT INTO account (email, username, fullName, positionId, departmentId, createDate)
+    VALUES (in_email, generated_username, in_fullName, default_positionID, waiting_room_departmentID, NOW());
+
+    SELECT CONCAT('Account created successfully for ', in_fullName, ' with username: ', generated_username) AS resultMessage;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE getQuestionWithType(
+    IN in_put VARCHAR(50)
+)
+BEGIN
+    IF (in_put = 'Trắc nghiệm') THEN
+        SELECT q.*
+        FROM Question q
+        WHERE LENGTH(q.Content) = (
+            SELECT MAX(LENGTH(q2.Content))
+            FROM Question q2
+        ) AND q.TypeID = 1;
+    ELSE
+        SELECT q.*
+        FROM Question q
+        WHERE LENGTH(q.Content) = (
+            SELECT MAX(LENGTH(q2.Content))
+            FROM Question q2
+        ) AND q.TypeID = 4;
+    END IF;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+create procedure deleteExamId(in Id INT)
+
+BEGIN
+	delete from exam where id = Id;
+end $$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE deleteExamCreated_3()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE exam_id INT;
+    DECLARE delete_count INT DEFAULT 0;
+    DECLARE cur CURSOR FOR
+        SELECT q.id
+        FROM question q
+        WHERE YEAR(q.CreateDate) = YEAR(CURDATE()) - 3;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO exam_id;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        CALL deleteExamId(exam_id);
+        SET delete_count = delete_count + 1;
+    END LOOP;
+
+    CLOSE cur;
+    SELECT CONCAT('Số lượng exam đã xóa: ', delete_count) AS result;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+create procedure deleteDepartment(in departmentName varchar(50))
+
+BEGIN
+	DECLARE depart_id INT;
+     select d.DepartmentID INTO depart_id from Department d where d.DepartmentName = departmentName ;
+	delete from Department where id = depart_id;
+    if depart_id is not null then
+    update  account set DepartmentID  = 1 where DepartmentID = depart_id;
+    end if;
+end $$
+DELIMITER ;
+
+DELIMITER $$
+create procedure getCountQuestion()
+BEGIN
+		select count(q.id) from question q  where year(q.CreateDate) = year(now()) group by month(q.CreateDate);
+end $$
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE getCountQuestion_in_6_month()
+BEGIN
+    SELECT
+        MONTH(q.CreateDate) AS Month,
+        COUNT(q.id) AS QuestionCount
+    FROM
+        question q
+    WHERE
+        q.CreateDate >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
+    GROUP BY
+        MONTH(q.CreateDate)
+    ORDER BY
+        MONTH(q.CreateDate);
+END $$
+
+DELIMITER ;
+
+
+--------------------------------------------------- ** System 7 ----------------------------------------------------------
+
+
+DELIMITER $$
+CREATE TRIGGER checkGroupCreateDate
+before insert on group_t
+FOR EACH ROW
+BEGIN
+    IF NEW.CreateDate < DATE_SUB(CURDATE(), INTERVAL 1 YEAR) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot insert a group with a CreateDate older than one year.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER preventSaleDepartmentAddition
+BEFORE INSERT ON account
+FOR EACH ROW
+BEGIN
+	DECLARE sale_department_id INT;
+
+     SELECT DepartmentID
+    INTO sale_department_id
+    FROM Department
+    WHERE DepartmentName = 'Sale';
+
+    IF NEW.DepartmentID = sale_department_id THEN
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Department "Sale" cannot add more users';
+    END IF;
+
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER limitGroupUsers
+BEFORE INSERT ON GroupAccount
+FOR EACH ROW
+BEGIN
+	DECLARE totalUser INT;
+
+    select count(*)
+    into totalUser
+    from GroupAccount ga
+	where ga.GroupID = NEW.GroupID
+    group by ga.GroupID;
+
+    if totalUser >=5 then
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This group already has the maximum number of 5 users.';
+    END IF;
+
+
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER limitQuestion
+BEFORE INSERT ON ExamQuestion
+FOR EACH ROW
+BEGIN
+	DECLARE totalQuestion INT;
+
+    select count(*)
+    into totalQuestion
+    from ExamQuestion eq
+	where eq.ExamID = NEW.ExamID
+    group by eq.ExamID;
+
+    if totalQuestion >=10 then
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This exam already has the maximum number of 10 questions.';
+    END IF;
+
+
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+CREATE TRIGGER NoDeleteAccountAdmin
+BEFORE DELETE ON account
+FOR EACH ROW
+BEGIN
+	DECLARE id_user INT;
+
+    select a.AccountID
+    into id_user
+    from Account a
+	where a.Email = 'admin@gmail.com';
+
+    if id_user = old.AccountID then
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This is account Admin do not delete.';
+    END IF;
+END $$
+
+DELIMITER $$
+CREATE TRIGGER addDefaultDepartment
+BEFORE INSERT ON account
+FOR EACH ROW
+BEGIN
+
+    if new.DepartmentID is null then
+		set new.DepartmentID = 1;
+    END IF;
+END $$
+
+DELIMITER $$
+CREATE TRIGGER limitAnswer
+BEFORE INSERT ON Answer
+FOR EACH ROW
+BEGIN
+	DECLARE total_a INT;
+
+    select count(*)
+    into total_a
+    from Answer a
+	where a.QuestionID = new.QuestionID
+    group by QuestionID;
+
+    if total_a > 4 then
+    SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'This is question limit 4 answer';
+    END IF;
+END $$
+
+DELIMITER $$
+CREATE TRIGGER noDeleteExam
+BEFORE DELETE ON Exam
+FOR EACH ROW
+BEGIN
+	DECLARE date_create date;
+    select e.CreateDate into date_create from exam e where e.ExamID = old.ExamID;
+
+    if date_create <=DATE_SUB(CURDATE(), INTERVAL 2 DAY) then
+		SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Exam do not delete';
+    END IF;
+END $$
+
+
+
+DELIMITER $$
+
+CREATE TRIGGER preventUpdateIfInExam
+BEFORE UPDATE ON Question
+FOR EACH ROW
+BEGIN
+    DECLARE exam_count INT;
+    SELECT COUNT(*) INTO exam_count
+    FROM ExamQuestion
+    WHERE QuestionID = OLD.QuestionID;
+    IF exam_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot update this question because it is associated with an exam.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+DELIMITER $$
+
+CREATE TRIGGER preventDeleteIfInExam
+BEFORE DELETE ON Question
+FOR EACH ROW
+BEGIN
+    DECLARE exam_count INT;
+    SELECT COUNT(*) INTO exam_count
+    FROM ExamQuestion
+    WHERE QuestionID = OLD.QuestionID;
+    IF exam_count > 0 THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Cannot delete this question because it is associated with an exam.';
+    END IF;
+END $$
+
+DELIMITER ;
+
+
+
+
+------------------------------------------ ** Extra Assignments -------------------------------------------------------
+
+
+------------------------------------------ ** Assignment 1,2-------------------------------------------------------------
+CREATE TABLE Trainee (
+    TraineeId INT AUTO_INCREMENT PRIMARY KEY,
+    Full_Name VARCHAR(100),
+    Birth_Date DATE,
+    Gender ENUM('male', 'female', 'unknown'),
+    ET_IQ INT CHECK(ET_IQ BETWEEN 0 AND 20),
+    ET_Gmath INT CHECK(ET_Gmath BETWEEN 0 AND 20),
+    ET_English INT CHECK(ET_English BETWEEN 0 AND 50),
+    Training_Class VARCHAR(50) NOT NULL,
+    Evaluation_Notes TEXT
+);
+
+ALTER TABLE Trainee
+ADD COLUMN VTI_Account VARCHAR(50) NOT NULL UNIQUE;
+
+CREATE TABLE user (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(25),
+    code VARCHAR(5),
+    modifiedDate DATETIME
+);
+
+CREATE TABLE user_data (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    birthdate DATE,
+    gender ENUM('male', 'female', 'unknown'),
+    isDeletedFlag TINYINT(1)
+);
+
+
+
+INSERT INTO Trainee (Full_Name, Birth_Date, Gender, ET_IQ, ET_Gmath, ET_English, Training_Class, Evaluation_Notes, VTI_Account)
+VALUES
+('Nguyen Van A', '1995-01-15', 'male', 18, 15, 45, 'Class A', 'Good performance', 'VTI001'),
+('Tran Thi B', '1996-02-25', 'female', 20, 19, 50, 'Class B', 'Excellent', 'VTI002'),
+('Le Van C', '1997-03-30', 'male', 16, 12, 40, 'Class A', 'Average', 'VTI003'),
+('Hoang Thi D', '1995-04-10', 'female', 19, 18, 48, 'Class B', 'Good', 'VTI004'),
+('Pham Van E', '1996-05-20', 'male', 17, 13, 42, 'Class C', 'Improving', 'VTI005'),
+('Vu Thi F', '1997-06-05', 'female', 18, 17, 47, 'Class C', 'Good potential', 'VTI006'),
+('Ngo Van G', '1998-07-15', 'male', 15, 14, 43, 'Class A', 'Needs improvement', 'VTI007'),
+('Dang Thi H', '1999-08-25', 'female', 20, 20, 50, 'Class B', 'Outstanding', 'VTI008'),
+('Phan Van I', '1997-09-30', 'male', 16, 12, 41, 'Class C', 'Average', 'VTI009'),
+('Bui Thi J', '1996-10-10', 'female', 19, 17, 46, 'Class A', 'Very good', 'VTI010');
+
+INSERT INTO user (name, code, modifiedDate)
+VALUES
+('User A', 'A001', '2024-01-01 12:00:00'),
+('User B', 'B002', '2024-02-01 12:00:00'),
+('User C', 'C003', '2024-03-01 12:00:00'),
+('User D', 'D004', '2024-04-01 12:00:00'),
+('User E', 'E005', '2024-05-01 12:00:00'),
+('User F', 'F006', '2024-06-01 12:00:00'),
+('User G', 'G007', '2024-07-01 12:00:00'),
+('User H', 'H008', '2024-08-01 12:00:00'),
+('User I', 'I009', '2024-09-01 12:00:00'),
+('User J', 'J010', '2024-10-01 12:00:00');
+
+INSERT INTO user_data (birthdate, gender, isDeletedFlag)
+VALUES
+('1990-01-01', 'male', 0),
+('1991-02-02', 'female', 0),
+('1992-03-03', 'male', 1),
+('1993-04-04', 'female', 0),
+('1994-05-05', 'male', 1),
+('1995-06-06', 'female', 0),
+('1996-07-07', 'male', 1),
+('1997-08-08', 'female', 0),
+('1998-09-09', 'male', 1),
+('1999-10-10', 'female', 0);
+
+------------------------------------------ ** Assignment 3 -------------------------------------------------------------
+
+select count(*) from  trainee  t group by month(t.birth_date);
+select * from trainee  t where length(t.full_name) = (
+select max(length(t2.full_name)) from trainee t2
+);
+select * from trainee t where t.ET_IQ + t.ET_Gmath >= 20 and t.ET_IQ >= 8 and t.ET_Gmath >= 8 and t.ET_English >= 18;
+delete from trainee where TraineeId = 3 ;
+update trainee set training_class = 'Class B' where TraineeId = 5;
+
+
+------------------------------------------ ** Assignment 4 -------------------------------------------------------------
+
+
+create table Department(
+	Department_Number INT AUTO_INCREMENT PRIMARY KEY,
+    Department_Name varchar(200)
+);
+create table Employee_Table(
+	Employee_Number INT AUTO_INCREMENT PRIMARY KEY,
+    Employee_Name varchar(200),
+    Department_Number INT,
+    CONSTRAINT fk_department FOREIGN KEY (Department_Number) REFERENCES department(Department_Number)
+);
+create table Employee_Skill_Table(
+	Employee_Number INT,
+    Skill_Code varchar(50),
+    Date_Registered date,
+    CONSTRAINT fk_employee FOREIGN KEY (Employee_Number) REFERENCES Employee_Table(Employee_Number)
+)
+INSERT INTO Department (Department_Name)
+VALUES
+('Human Resources'),
+('Finance'),
+('Marketing'),
+('Sales'),
+('IT'),
+('Customer Support'),
+('Operations'),
+('Research and Development'),
+('Legal'),
+('Procurement');
+INSERT INTO Employee_Table (Employee_Name, Department_Number)
+VALUES
+('John Doe', 1),
+('Jane Smith', 2),
+('Alice Johnson', 3),
+('Bob Brown', 4),
+('Charlie Davis', 5),
+('Emily White', 6),
+('Frank Harris', 7),
+('Grace Lee', 8),
+('Hank Walker', 9),
+('Ivy Scott', 10);
+INSERT INTO Employee_Skill_Table (Employee_Number, Skill_Code, Date_Registered)
+VALUES
+(1, 'HR01', '2024-01-15'),
+(2, 'FIN02', '2024-02-20'),
+(3, 'MKT03', '2024-03-25'),
+(4, 'SLS04', '2024-04-10'),
+(5, 'IT05', '2024-05-15'),
+(6, 'CST06', '2024-06-12'),
+(7, 'OPS07', '2024-07-18'),
+(8, 'RND08', '2024-08-23'),
+(9, 'LEG09', '2024-09-05'),
+(10, 'PRC10', '2024-10-10');
+
+select et.* from employee_table et
+inner join employee_skill_table est
+on et.Employee_Number = est.Employee_Number
+where est.Skill_Code = 'Java';
+
+select * from employee_table et
+group by et.Department_Number
+having count(et.Department_Number) > 3 ;
+select * from employee_table et
+group by et.Department_Number;
+
+select et.* from employee_table et
+inner join employee_skill_table est
+on et.Employee_Number = est.Employee_Number
+group by est.Employee_Number
+having count(est.Employee_Number) > 1;
+
+------------------------------------------ ** Assignment 6 -------------------------------------------------------------
+create table Employee(
+EmployeeId INT AUTO_INCREMENT PRIMARY KEY,
+EmployeeLastName varchar(50),
+EmployeeFirstName varchar(50),
+EmployeeStatus TINYINT(1),
+SupervisiorID INT,
+SocialSecurityNumber INT
+) ;
+create table projects(
+projectId INT AUTO_INCREMENT PRIMARY KEY,
+managerId INT,
+projectName varchar(100),
+projectStartDate date,
+projectDescription varchar(500),
+projectDetail varchar(10000),
+projectCompletedOne date,
+CONSTRAINT fk_fk_manager  FOREIGN KEY (managerId) REFERENCES Employee(EmployeeId)
+);
+create table Project_Modules(
+ModuleId INT AUTO_INCREMENT PRIMARY KEY,
+projectId INT,
+EmployeeId INT,
+ProjectModulesDate date,
+ProjectModulesCompleteOn date,
+ProjectModulesDescriptions varchar(1000),
+CONSTRAINT fk_employee_new FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId),
+CONSTRAINT fk_project FOREIGN KEY (projectId) REFERENCES projects(projectId)
+);
+create table Work_done(
+WorkDoneId INT AUTO_INCREMENT PRIMARY KEY,
+EmployeeId INT,
+ModuleId INT,
+WorkDoneDate date,
+WorkDoneDescription varchar(10000),
+WorkDoneStatus TINYINT(1),
+CONSTRAINT fk_employees FOREIGN KEY (EmployeeId) REFERENCES Employee(EmployeeId),
+CONSTRAINT fk_modules FOREIGN KEY (ModuleId) REFERENCES Project_Modules(ModuleId)
+);
+INSERT INTO Employee (EmployeeLastName, EmployeeFirstName, EmployeeStatus, SupervisiorID, SocialSecurityNumber)
+VALUES
+('Smith', 'John', 1, NULL, 123456789),
+('Doe', 'Jane', 1, 1, 987654321),
+('Brown', 'Charlie', 1, 2, 112233445),
+('Taylor', 'Emily', 1, 2, 998877665),
+('Wilson', 'Frank', 1, 1, 556677889);
+INSERT INTO projects (managerId, projectName, projectStartDate, projectDesciption, projectDetailt, projectCompletedOne)
+VALUES
+(1, 'Project Alpha', '2024-01-15', 'Alpha project description', 'Alpha project detailed description', '2024-06-15'),
+(2, 'Project Beta', '2024-02-20', 'Beta project description', 'Beta project detailed description', NULL),
+(3, 'Project Gamma', '2024-03-25', 'Gamma project description', 'Gamma project detailed description', NULL),
+(4, 'Project Delta', '2024-04-10', 'Delta project description', 'Delta project detailed description', '2024-07-10'),
+(5, 'Project Epsilon', '2024-05-15', 'Epsilon project description', 'Epsilon project detailed description', NULL);
+
+INSERT INTO Project_Modules (projectId, EmployeeId, ProjectModulesDate, ProjectModulesCompleteOn, ProjectModulesDesciptions)
+VALUES
+(1, 1, '2024-01-20', '2024-02-15', 'Module 1 for Project Alpha'),
+(2, 2, '2024-02-25', '2024-03-10', 'Module 1 for Project Beta'),
+(3, 3, '2024-03-30', '2024-04-20', 'Module 1 for Project Gamma'),
+(4, 4, '2024-04-15', '2024-05-15', 'Module 1 for Project Delta'),
+(5, 5, '2024-05-20', '2024-06-20', 'Module 1 for Project Epsilon');
+
+INSERT INTO Work_done (EmployeeId, ModuleId, WorkDoneDate, WorkDoneDescription, WorkDoneStatus)
+VALUES
+(1, 1, '2024-02-10', 'Work done on Module 1 for Project Alpha', 1),
+(2, 2, '2024-03-05', 'Work done on Module 1 for Project Beta', 1),
+(3, 3, '2024-04-15', 'Work done on Module 1 for Project Gamma', 1),
+(4, 4, '2024-05-10', 'Work done on Module 1 for Project Delta', 1),
+(5, 5, '2024-06-10', 'Work done on Module 1 for Project Epsilon', 1);
+
+DELIMITER //
+
+CREATE PROCEDURE RemoveOldCompletedProjects()
+BEGIN
+    DECLARE v_removed_projects INT DEFAULT 0;
+    DECLARE v_removed_modules INT DEFAULT 0;
+    DECLARE v_removed_work_done INT DEFAULT 0;
+
+    -- Remove records from Work_done that are related to completed projects
+    DELETE wd
+    FROM Work_done wd
+    JOIN Project_Modules pm ON wd.ModuleId = pm.ModuleId
+    JOIN projects p ON pm.projectId = p.projectId
+    WHERE p.projectCompletedOn < DATE_SUB(CURDATE(), INTERVAL 3 MONTH);
+    SET v_removed_work_done = ROW_COUNT();
+    DELETE pm
+    FROM Project_Modules pm
+    JOIN projects p ON pm.projectId = p.projectId
+    WHERE p.projectCompletedOn < DATE_SUB(CURDATE(), INTERVAL 3 MONTH);
+    SET v_removed_modules = ROW_COUNT();
+    DELETE FROM projects
+    WHERE projectCompletedOn < DATE_SUB(CURDATE(), INTERVAL 3 MONTH);
+    SET v_removed_projects = ROW_COUNT();
+    SELECT CONCAT('Removed ', v_removed_work_done, ' records from Work_done table') AS result;
+    SELECT CONCAT('Removed ', v_removed_modules, ' records from Project_Modules table') AS result;
+    SELECT CONCAT('Removed ', v_removed_projects, ' records from projects table') AS result;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE PROCEDURE getModule( in p_projectId INT)
+BEGIN
+     select * from project_modules where ProjectModulesCompleteOn is null and projectId = p_projectId ;
+
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE FUNCTION GetUnassignedEmployeeInfo(IN p_employeeId INT)
+RETURNS VARCHAR(255)
+DETERMINISTIC
+BEGIN
+    DECLARE employee_info VARCHAR(255);
+    SELECT
+        CONCAT('Employee ID: ', e.EmployeeId, ', Name: ', e.EmployeeFirstName, ' ', e.EmployeeLastName)
+    INTO
+        employee_info
+    FROM
+        Employee e
+    WHERE
+        e.EmployeeId = p_employeeId
+        AND EXISTS (
+            SELECT 1
+            FROM Work_done wd
+            WHERE wd.EmployeeId = e.EmployeeId
+        )
+        AND NOT EXISTS (
+            SELECT 1
+            FROM Project_Modules pm
+            WHERE pm.EmployeeId = e.EmployeeId
+        );
+
+    RETURN IFNULL(employee_info, 'No such unassigned employee found');
+END //
+
+DELIMITER ;
+
+------------------------------------------ ** Assignment 7 -------------------------------------------------------------
+DELIMITER //
+
+CREATE TRIGGER ValidateProjectModuleInsert
+BEFORE INSERT ON Project_Modules
+FOR EACH ROW
+BEGIN
+    DECLARE v_projectStartDate DATE;
+    DECLARE v_projectCompletedOn DATE;
+    SELECT projectStartDate, projectCompletedOn
+    INTO v_projectStartDate, v_projectCompletedOn
+    FROM projects
+    WHERE projectId = NEW.projectId;
+    IF NEW.ProjectModulesDate < v_projectStartDate THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Module start date cannot be earlier than the project start date';
+    ELSEIF NEW.ProjectModulesCompleteOn > v_projectCompletedOn THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Module completion date cannot be later than the project completion date';
+    END IF;
+END //
+
+DELIMITER ;
+
+DELIMITER //
+
+CREATE TRIGGER ValidateProjectModuleUpdate
+BEFORE UPDATE ON Project_Modules
+FOR EACH ROW
+BEGIN
+    DECLARE v_projectStartDate DATE;
+    DECLARE v_projectCompletedOn DATE;
+    SELECT projectStartDate, projectCompletedOn
+    INTO v_projectStartDate, v_projectCompletedOn
+    FROM projects
+    WHERE projectId = NEW.projectId;
+    IF NEW.ProjectModulesDate < v_projectStartDate THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Module start date cannot be earlier than the project start date';
+    ELSEIF NEW.ProjectModulesCompleteOn > v_projectCompletedOn THEN
+        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Module completion date cannot be later than the project completion date';
+    END IF;
+END //
+
+DELIMITER ;
+
+
+create view get_trainee as
+select * from trainee t where t.ET_IQ + t.ET_Gmath >= 20 and t.ET_IQ >= 8 and t.ET_Gmath >= 8 and t.ET_English >= 18;
+
+
+------------------------------------------ ** Extra Assignments 2 -------------------------------------------------------
+------------------------------------------ ** Railway_1 -----------------------------------------------------------------
+CREATE TABLE Khoa (
+    makhoa CHAR(10) PRIMARY KEY,
+    tenkhoa CHAR(30),
+    dienthoai CHAR(10)
+);
+
+-- Table: GiangVien
+CREATE TABLE GiangVien (
+    magv INT PRIMARY KEY,
+    hotengv CHAR(30),
+    luong DECIMAL(5,2),
+    makhoa CHAR(10),
+    CONSTRAINT fk_khoa_gv FOREIGN KEY (makhoa) REFERENCES Khoa(makhoa)
+);
+
+-- Table: SinhVien
+CREATE TABLE SinhVien (
+    masv INT PRIMARY KEY,
+    hotensv CHAR(30),
+    makhoa CHAR(10),
+    namsinh INT,
+    quequan CHAR(30),
+    CONSTRAINT fk_khoa_sv FOREIGN KEY (makhoa) REFERENCES Khoa(makhoa)
+);
+
+-- Table: DeTai
+CREATE TABLE DeTai (
+    madt CHAR(10) PRIMARY KEY,
+    tendt CHAR(30),
+    kinhphi INT,
+    NoiThucTap CHAR(30)
+);
+
+-- Table: HuongDan
+CREATE TABLE HuongDan (
+    masv INT,
+    madt CHAR(10),
+    magv INT,
+    ketqua DECIMAL(5,2),
+    PRIMARY KEY (masv, madt, magv),
+    CONSTRAINT fk_sv_dt FOREIGN KEY (masv) REFERENCES SinhVien(masv),
+    CONSTRAINT fk_dt FOREIGN KEY (madt) REFERENCES DeTai(madt),
+    CONSTRAINT fk_gv FOREIGN KEY (magv) REFERENCES GiangVien(magv)
+);
+
+ALTER TABLE GiangVien MODIFY COLUMN luong DECIMAL(8,2);
+INSERT INTO Khoa (makhoa, tenkhoa, dienthoai) VALUES
+('K01', 'Công Nghệ Thông Tin', '1234567890'),
+('K02', 'Điện Tử Viễn Thông', '0987654321'),
+('K03', 'Cơ Khí', '1122334455'),
+('K04', 'Kinh Tế', '2233445566'),
+('K05', 'Quản Trị Kinh Doanh', '3344556677');
+INSERT INTO GiangVien (magv, hotengv, luong, makhoa) VALUES
+(1, 'Nguyen Van A', 5000.00, 'K01'),
+(2, 'Le Thi B', 5500.00, 'K02'),
+(3, 'Tran Van C', 6000.00, 'K03'),
+(4, 'Pham Thi D', 5200.00, 'K04'),
+(5, 'Hoang Van E', 5300.00, 'K05');
+INSERT INTO SinhVien (masv, hotensv, makhoa, namsinh, quequan) VALUES
+(1, 'Nguyen Thi Mai', 'K01', 2000, 'Ha Noi'),
+(2, 'Le Van Hoang', 'K01', 1999, 'HCM City'),
+(3, 'Tran Thi Hoa', 'K02', 2001, 'Da Nang'),
+(4, 'Pham Van Minh', 'K03', 2000, 'Hue'),
+(5, 'Hoang Thi Lan', 'K04', 2002, 'Nha Trang');
+INSERT INTO DeTai (madt, tendt, kinhphi, NoiThucTap) VALUES
+('DT01', 'Dự Án AI', 1000000, 'Công Ty ABC'),
+('DT02', 'Hệ Thống IoT', 1500000, 'Công Ty XYZ'),
+('DT03', 'Thiết Kế Web', 1200000, 'Công Ty 123'),
+('DT04', 'Quản Lý Dự Án', 2000000, 'Công Ty DEF'),
+('DT05', 'Phát Triển Game', 1800000, 'Công Ty GHI');
+INSERT INTO HuongDan (masv, madt, magv, ketqua) VALUES
+(1, 'DT01', 1, 8.5),
+(2, 'DT01', 1, 9.0),
+(3, 'DT02', 2, 7.5),
+(4, 'DT03', 3, 8.0),
+(5, 'DT04', 4, 9.5);
+
+select gv.magv,gv.hotengv , k.tenkhoa
+from khoa k inner join GiangVien gv
+on gv.makhoa = k.makhoa;
+
+select gv.magv,gv.hotengv , k.tenkhoa
+from khoa k inner join GiangVien gv
+on gv.makhoa = k.makhoa
+where k.tenkhoa = 'DIA LY' or k.tenkhoa = 'QLTN';
+
+select count(*)
+from SinhVien sv
+inner join Khoa k
+on sv.makhoa = k.makhoa
+where k.tenkhoa = 'CONG NGHE SINH HOC';
+
+SELECT
+    sv.masv AS student_id,
+    sv.hotensv AS full_name,
+    YEAR(CURDATE()) - sv.namsinh AS age
+FROM
+    SinhVien sv
+INNER JOIN
+    Khoa k ON sv.makhoa = k.makhoa
+WHERE
+    k.tenkhoa = 'TOAN';
+
+select count(*)
+from GiangVien gv
+inner join Khoa k
+on gv.makhoa = k.makhoa
+where k.tenkhoa = 'CONG NGHE SINH HOC';
+
+select count(*)
+from SinhVien sv
+left join HuongDan hd on sv.masv = hd.masv
+ where hd.masv is null;
+
+select k.makhoa, k.tenkhoa, count(*)
+from khoa k
+inner join giangvien gv
+on k.makhoa = gv.makhoa
+group by k.makhoa;
+
+select k.dienthoai
+from khoa k
+inner join
+SinhVien sv
+on k.makhoa  = sv.makhoa
+where sv.hotensv = 'Le van son';
+
+select dt.madt, dt.tendt
+from Detai dt
+inner join HuongDan hd
+on hd.madt = dt.madt
+inner join giangvien gv
+on gv.magv = hd.magv
+where gv.hotengv = 'Tran son';
+
+
+select dt.tendt
+from Detai dt
+inner join HuongDan hd
+on hd.madt = dt.madt
+left join sinhvien sv
+on sv.masv = hd.masv
+where sv.masv is null;
+
+SELECT gv.magv, gv.hotengv, k.tenkhoa
+FROM GiangVien gv
+INNER JOIN Khoa k ON k.makhoa = gv.makhoa
+INNER JOIN SinhVien sv ON sv.makhoa = k.makhoa
+GROUP BY gv.magv, gv.hotengv, k.tenkhoa
+HAVING COUNT(sv.masv) > 3;
+
+
+select dt.madt, dt.tendt from detai dt having max(dt.kinhphi);
+
+select dt.madt, dt.tendt
+from detai dt
+ inner join HuongDan hd
+ on hd.madt = dt.madt
+ inner join SinhVien sv
+ on sv.masv = hd.masv
+ group by dt.madt
+ having count(sv.masv) > 2;
+
+
+ SELECT
+     sv.masv AS student_id,
+     sv.hotensv AS full_name,
+     hd.ketqua AS score
+ FROM
+     SinhVien sv
+ INNER JOIN
+     Khoa k ON sv.makhoa = k.makhoa
+ LEFT JOIN
+     HuongDan hd ON sv.masv = hd.masv
+ WHERE
+     k.tenkhoa IN ('DIALY', 'QLTN');
+
+
+SELECT
+    k.tenkhoa AS department_name,
+    COUNT(sv.masv) AS number_of_students
+FROM
+    Khoa k
+LEFT JOIN
+    SinhVien sv ON k.makhoa = sv.makhoa
+GROUP BY
+    k.tenkhoa;
+
+ SELECT
+     sv.masv AS student_id,
+     sv.hotensv AS full_name,
+     sv.quequan AS hometown,
+     dt.tendt AS project_name,
+     hd.ketqua AS score
+ FROM
+     SinhVien sv
+ INNER JOIN
+     HuongDan hd ON sv.masv = hd.masv
+ INNER JOIN
+     DeTai dt ON hd.madt = dt.madt
+ WHERE
+     sv.quequan = dt.NoiThucTap;
+
+
+SELECT
+    sv.masv AS student_id,
+    sv.hotensv AS full_name,
+    sv.quequan AS hometown
+FROM
+    SinhVien sv
+LEFT JOIN
+    HuongDan hd ON sv.masv = hd.masv
+WHERE
+    hd.masv IS NULL;
+
+
+ SELECT
+     sv.masv AS student_id,
+     sv.hotensv AS full_name
+ FROM
+     SinhVien sv
+ INNER JOIN
+     HuongDan hd ON sv.masv = hd.masv
+ WHERE
+     hd.ketqua = 0;
+
+
+------------------------------------------ ** Railway_2 -----------------------------------------------------------------
+
+delete from khackhang kh where kh.tenkhachhang = 'Le Thi A';
+update khachhang set makhuvuc = 'KV003' where makhuvuc = 'KV001';
+
+
+select *
+from thanhviengiaohang tv
+where tv.tenthanhviengiaohang like 'Tr%' and length(tv.tenthanhviengiaohang) >= 25;
+
+select * from donhang_giaohang dg
+inner join khuvuc kv on dg.makhuvucgiaohang = kv.makhuvuc
+ where year(dg.ngaygiaohang) = 2017 and kv.tenkhuvuc = 'Hai Chau';
+
+select dg.MaDonHangGiaoHang, dg.MaThanhVienGiaoHang, tv.TenThanhVienGiaoHang, dg.NgayGiaoHang, dg.PhuongThucThanhToan
+ from donhang_giaohang dg
+ inner join thanhviengiaohang tv
+ on tv.mathanhviengiaohang = dg.mathanhviengiaohang
+  where dg.trangthaigiaohang = 'Da giao hang'
+  order by dg.NgayGiaoHang asc , dg.PhuongThucThanhToan desc;
+
+select * from  thanhviengiaohang tv
+left join dangkygiaohang dk
+on tv.mathanhviengiaohang = dk.mathanhviengiaohang
+where tv.gioitinh = 'Nam' and dk.mathanhviengiaohang is null;
+
+select distinct(kh.tenkhachhang) from khachhang kh ;
+
+select dg.MaKhachHang, dg.TenKhachHang, dg.diachigiaohang, dg.MaDonHangGiaoHang, dg.PhuongThucThanhToan, dg.TrangThaiGiaoHang
+ from donhang_giaohang dg;
+
+ select * from thanhviengiaohang tv
+  inner join donhang_giaohang dg
+  on tv.mathanhviengiaohang = dg.mathanhviengiaohang
+  inner join khuvuc kv
+   where tv.gioitinh = 'Nu' and kv.tenkhuvuc = 'Hai Chau'
+   GROUP BY tv.mathanhviengiaohang
+   HAVING COUNT(DISTINCT dg.makhachhang) > 10;
+
+SELECT DISTINCT kh.*
+FROM khachhang kh
+INNER JOIN khuvuc kv ON kh.makhuvuc = kv.makhuvuc
+INNER JOIN donhang_giaohang dg ON dg.makhachhang = kh.makhachhang
+WHERE kv.tenkhuvuc = 'Lien Chieu'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM donhang_giaohang dg2
+      INNER JOIN thanhviengiaohang tv ON tv.mathanhviengiaohang = dg2.mathanhviengiaohang
+      WHERE dg2.makhachhang = kh.makhachhang
+        AND tv.gioitinh = 'Nam'
+  );
+
+
+------------------------------------------ ** Railway_3 -----------------------------------------------------------------
+
+SELECT yr, subject, winner
+  FROM nobel
+ WHERE yr = 1950;
+
+SELECT winner
+   FROM nobel
+  WHERE yr = 1962
+    AND subject = 'literature';
+
+select yr, subject
+from nobel
+where winner = 'Albert Einstein';
+
+select winner
+from nobel
+where subject = 'peace'  and yr >= 2000;
+
+SELECT *
+FROM nobel
+WHERE subject = 'literature'
+  AND yr >= 1980
+  AND yr <= 1989;
+
+SELECT *
+FROM nobel
+WHERE winner IN ('Theodore Roosevelt',
+                  'Woodrow Wilson',
+                  'Jimmy Carter',
+                  'Barack Obama');
+
+select winner from nobel where winner like 'John%';
+
+select * from nobel where subject ='physics' and yr =1980
+union
+select * from nobel where subject ='chemistry' and yr =1984;
+
+select * from nobel where yr = 1980 and subject  not in (
+'chemistry', 'medicine');
+
+
+select * from nobel where subject = 'Medicine' and yr < 1910
+union
+select * from nobel where subject = 'Literature' and yr >= 2004;
+
+select * from nobel where winner = 'PETER GRÜNBERG';
+
+select * from nobel where winner = 'EUGENE O''NEILL';
+
+select winner, yr, subject from nobel where winner like 'Sir%' order by yr DESC,winner;
+
+SELECT winner, subject
+FROM nobel
+WHERE yr = 1984
+ORDER BY
+  CASE
+    WHEN subject = 'chemistry' THEN 2
+    WHEN subject = 'physics' THEN 2
+    ELSE 1
+  END,
+  subject,
+  winner;
+
